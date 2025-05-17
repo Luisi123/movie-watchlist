@@ -1,5 +1,260 @@
 ---
-import SignForm from '../components/SignForm.astro';
+// src/pages/index.astro
+import MainLayout from '../layouts/MainLayout.astro';
+import Header from '../components/header.astro';
+import Footer from '../components/footer.astro';
+
+// Featured movies (this data would come from your API in a real app)
+const featuredMovies = [
+    {
+        id: 1,
+        title: "Inception",
+        posterUrl: "https://via.placeholder.com/300x450?text=Inception",
+        year: 2010,
+        rating: 8.8
+    },
+    {
+        id: 2,
+        title: "The Shawshank Redemption",
+        posterUrl: "https://via.placeholder.com/300x450?text=Shawshank",
+        year: 1994,
+        rating: 9.3
+    },
+    {
+        id: 3,
+        title: "The Dark Knight",
+        posterUrl: "https://via.placeholder.com/300x450?text=Dark+Knight",
+        year: 2008,
+        rating: 9.0
+    },
+    {
+        id: 4,
+        title: "Pulp Fiction",
+        posterUrl: "https://via.placeholder.com/300x450?text=Pulp+Fiction",
+        year: 1994,
+        rating: 8.9
+    }
+];
 ---
 
-  <SignForm />
+<MainLayout>
+    <Header slot="header" />
+    
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Track, Rate, and Discover Movies</h1>
+            <p>Build your personal watchlist and get AI-powered recommendations based on your taste</p>
+            <div class="cta-buttons">
+                <a href="/signup" class="btn primary">Get Started</a>
+                <a href="/recommendations" class="btn secondary">Explore Movies</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="feature">
+            <div class="feature-icon">📋</div>
+            <h2>Track Your Movies</h2>
+            <p>Create and manage your personal watchlist with ease.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">⭐</div>
+            <h2>Rate & Review</h2>
+            <p>Share your thoughts and ratings on films you've watched.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon">🤖</div>
+            <h2>Smart Recommendations</h2>
+            <p>Get personalized movie suggestions powered by AI.</p>
+        </div>
+    </section>
+
+    <section class="featured">
+        <h2>Featured Movies</h2>
+        <div class="movie-grid">
+            {featuredMovies.map(movie => (
+                <div class="movie-card">
+                    <div class="movie-poster">
+                        <img src={movie.posterUrl} alt={movie.title} />
+                    </div>
+                    <div class="movie-info">
+                        <h3>{movie.title}</h3>
+                        <div class="movie-meta">
+                            <span class="year">{movie.year}</span>
+                            <span class="rating">⭐ {movie.rating}</span>
+                        </div>
+                        <a href={`/movies/${movie.id}`} class="btn small">View Details</a>
+                    </div>
+                </div>
+            ))}
+        </div>
+        <div class="view-more">
+            <a href="/movies" class="btn secondary">View More Movies</a>
+        </div>
+    </section>
+
+    <Footer slot="footer" />
+</MainLayout>
+
+<style>
+    .hero {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/cinema-background.jpg');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 6rem 2rem;
+        text-align: center;
+    }
+
+    .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .cta-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 0.8rem 1.5rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .btn.small {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .btn.primary {
+        background-color: #e94560;
+        color: white;
+    }
+
+    .btn.primary:hover {
+        background-color: #d13652;
+    }
+
+    .btn.secondary {
+        background-color: transparent;
+        border: 2px solid #e94560;
+        color: #e94560;
+    }
+
+    .btn.secondary:hover {
+        background-color: rgba(233, 69, 96, 0.1);
+    }
+
+    .features {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        padding: 4rem 2rem;
+        background-color: #f8f9fa;
+        flex-wrap: wrap;
+    }
+
+    .feature {
+        flex: 1;
+        min-width: 250px;
+        max-width: 350px;
+        text-align: center;
+        padding: 2rem;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .featured {
+        padding: 4rem 2rem;
+    }
+
+    .featured h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .movie-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .movie-card {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .movie-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .movie-poster img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .movie-info {
+        padding: 1.5rem;
+    }
+
+    .movie-info h3 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .movie-meta {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        color: #777;
+    }
+
+    .view-more {
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2rem;
+        }
+
+        .hero p {
+            font-size: 1rem;
+        }
+        
+        .features {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .movie-grid {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+    }
+</style>
