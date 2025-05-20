@@ -1,0 +1,607 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import Header from '../components/header.astro';
+import Footer from '../components/footer.astro';
+import MovieCard from '../components/MovieCard.astro';
+import '../styles/global.css';
+---
+
+<MainLayout>
+    <Header slot="header" />
+    
+    <section class="watchlist-section">
+        <div class="container">
+            <h1 class="watchlist-title">My Watchlist</h1>
+            
+            <div class="watchlist-stats">
+                <span class="stat">
+                    <span class="stat-value" id="totalMovies">0</span>
+                    <span class="stat-label">Movies</span>
+                </span>
+                <span class="stat">
+                    <span class="stat-value" id="watchedMovies">0</span>
+                    <span class="stat-label">Watched</span>
+                </span>
+            </div>
+
+            <div class="watchlist-filters">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search your watchlist...">
+                </div>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="watched">Watched</button>
+                    <button class="filter-btn" data-filter="unwatched">Unwatched</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="movies-grid">
+        <div class="container">
+            <div class="grid" id="watchlistGrid">
+                <!-- Movies will be loaded here -->
+            </div>
+
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-state-content">
+                    <h2>Your watchlist is empty</h2>
+                    <p>Start adding movies to your watchlist to keep track of what you want to watch.</p>
+                    <a href="/search" class="btn primary">Browse Movies</a>
+                </div>
+            </div>
+
+            <div class="error-message" id="errorMessage" style="display: none;">
+                <p id="errorText"></p>
+            </div>
+        </div>
+    </section>
+
+    <Footer slot="footer" />
+</MainLayout>
+
+<style>
+    .watchlist-section {
+        background-color: #f8f9fa;
+        padding: 3rem 0;
+        text-align: center;
+    }
+
+    .watchlist-title {
+        margin-bottom: 1.5rem;
+        color: #333;
+    }
+
+    .watchlist-stats {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat {
+        text-align: center;
+    }
+
+    .stat-value {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #e94560;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .watchlist-filters {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+    }
+
+    .search-box input {
+        padding: 0.8rem 1rem;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        width: 300px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .search-box input:focus {
+        outline: none;
+        border-color: #e94560;
+    }
+
+    .filter-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .filter-btn {
+        padding: 0.8rem 1.5rem;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        background: white;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+    .filter-btn.active {
+        background: #e94560;
+        color: white;
+        border-color: #e94560;
+    }
+
+    .movies-grid {
+        padding: 3rem 0;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 2rem;
+        padding: 1rem 0;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .movie-card {
+        background: #1a1a1a;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        position: relative;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .movie-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .poster-container {
+        position: relative;
+        padding-top: 150%; /* Maintain aspect ratio */
+        background: #2d2d2d;
+        overflow: hidden;
+    }
+
+    .poster {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .no-poster {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #2d2d2d;
+        color: #666;
+    }
+
+    .rating {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+
+    .movie-info {
+        padding: 1rem;
+    }
+
+    .title {
+        margin: 0;
+        font-size: 1rem;
+        color: white;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .added-date, .year {
+        margin: 0.5rem 0;
+        color: #888;
+        font-size: 0.9rem;
+    }
+
+    .movie-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 0.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .btn-watched {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .btn-watched:hover {
+        background: #45a049;
+    }
+
+    .btn-remove {
+        background: #e94560;
+        color: white;
+    }
+
+    .btn-remove:hover {
+        background: #d13652;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 0;
+        color: #888;
+        background: #2d2d2d;
+        border-radius: 12px;
+        margin: 2rem 0;
+    }
+
+    .empty-state-content {
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .empty-state h2 {
+        margin-bottom: 1rem;
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    .empty-state p {
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+
+    .btn.primary {
+        background: #e94560;
+        color: white;
+        text-decoration: none;
+        padding: 1rem 2rem;
+        border-radius: 6px;
+        display: inline-block;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn.primary:hover {
+        background: #d13652;
+        transform: translateY(-2px);
+    }
+
+    .error-message {
+        background-color: #2d2d2d;
+        color: #e94560;
+        padding: 1.25rem;
+        border-radius: 8px;
+        margin: 2rem auto;
+        max-width: 800px;
+        border: 1px solid #e94560;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .watchlist-stats {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .watchlist-filters {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .search-box input {
+            width: 100%;
+        }
+
+        .filter-buttons {
+            justify-content: center;
+        }
+
+        .grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .movie-info {
+            padding: 0.75rem;
+        }
+
+        .title {
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            padding: 0.4rem;
+            font-size: 0.8rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .grid {
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.75rem;
+        }
+    }
+</style>
+
+<script>
+    // Initialize the watchlist functionality
+    function initWatchlist() {
+        // Get DOM elements
+        const watchlistGrid = document.getElementById('watchlistGrid');
+        const emptyState = document.getElementById('emptyState');
+        const totalMoviesSpan = document.getElementById('totalMovies');
+        const watchedMoviesSpan = document.getElementById('watchedMovies');
+        const searchInput = document.getElementById('searchInput');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const errorMessageDiv = document.getElementById('errorMessage');
+        const errorTextPara = document.getElementById('errorText');
+
+        // Store watchlist items and current filter
+        let watchlistItems: { id: number; movieTitle: string; posterUrl: string | null; watched: boolean; addedAt: string; rating: number | null; review: string | null }[] = [];
+        let currentFilter = 'all';
+
+        // Show error message
+        function showError(message: string) {
+            if (errorMessageDiv && errorTextPara) {
+                errorTextPara.textContent = message;
+                errorMessageDiv.style.display = 'block';
+            }
+        }
+
+        // Hide error message
+        function hideError() {
+            if (errorMessageDiv) {
+                errorMessageDiv.style.display = 'none';
+            }
+        }
+
+        // Fetch watchlist from API
+        async function fetchWatchlist() {
+            hideError();
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/signup';
+                    return;
+                }
+
+                // Decode the JWT token to get the user ID
+                const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+                const userId = parseInt(tokenPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']);
+
+                const response = await fetch(`/api/watchlist?userId=${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401 || response.status === 403) {
+                        localStorage.removeItem('token');
+                        window.location.href = '/signup';
+                        return;
+                    }
+                    const errorText = await response.text();
+                    throw new Error(`Failed to load watchlist: ${errorText}`);
+                }
+
+                const data = await response.json();
+                watchlistItems = data;
+                updateDisplay();
+            } catch (error) {
+                console.error('Error fetching watchlist:', error);
+                showError(error instanceof Error ? error.message : 'Failed to load watchlist. Please try again.');
+            }
+        }
+
+        // Update the display based on current filter and search
+        function updateDisplay() {
+            if (!watchlistGrid || !emptyState) return;
+
+            // Clear current display
+            watchlistGrid.innerHTML = '';
+
+            // Get search term
+            const searchTerm = searchInput ? (searchInput as HTMLInputElement).value.toLowerCase() : '';
+
+            // Filter items
+            let filteredItems = watchlistItems;
+            if (currentFilter === 'watched') {
+                filteredItems = filteredItems.filter(item => item.watched);
+            } else if (currentFilter === 'unwatched') {
+                filteredItems = filteredItems.filter(item => !item.watched);
+            }
+
+            if (searchTerm) {
+                filteredItems = filteredItems.filter(item => 
+                    item.movieTitle.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            // Show empty state or grid
+            if (filteredItems.length === 0) {
+                emptyState.style.display = 'block';
+                watchlistGrid.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                watchlistGrid.style.display = 'grid';
+
+                // Create movie cards
+                filteredItems.forEach(item => {
+                    try {
+                        const card = document.createElement('div');
+                        card.className = 'movie-card';
+                        card.innerHTML = `
+                            <div class="poster-container">
+                                <img src="${item.posterUrl || '/no-image.png'}" 
+                                     alt="${item.movieTitle}" 
+                                     onerror="this.src='/no-image.png'">
+                            </div>
+                            <div class="movie-info">
+                                <h3 class="title">${item.movieTitle}</h3>
+                                <p class="added-date">Added: ${new Date(item.addedAt).toLocaleDateString()}</p>
+                                <div class="movie-actions">
+                                    <button class="btn btn-watched" data-id="${item.id}">
+                                        ${item.watched ? 'Watched' : 'Mark as Watched'}
+                                    </button>
+                                    <button class="btn btn-remove" data-id="${item.id}">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        watchlistGrid.appendChild(card);
+                    } catch (error) {
+                        console.error('Error creating movie card:', error);
+                    }
+                });
+            }
+
+            // Update stats
+            if (totalMoviesSpan) {
+                totalMoviesSpan.textContent = watchlistItems.length.toString();
+            }
+            if (watchedMoviesSpan) {
+                const watchedCount = watchlistItems.filter(item => item.watched).length;
+                watchedMoviesSpan.textContent = watchedCount.toString();
+            }
+        }
+
+        // Add event listeners
+        if (searchInput) {
+            searchInput.addEventListener('input', updateDisplay);
+        }
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                currentFilter = button.getAttribute('data-filter') || 'all';
+                updateDisplay();
+            });
+        });
+
+        // Add event delegation for movie actions
+        if (watchlistGrid) {
+            watchlistGrid.addEventListener('click', async (e) => {
+                const target = e.target;
+                const button = target instanceof HTMLElement ? target.closest('button') : null;
+                if (!button) return;
+
+                const movieId = button.getAttribute('data-id');
+                if (!movieId) return;
+
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/signup';
+                    return;
+                }
+
+                try {
+                    if (button.classList.contains('btn-watched')) {
+                        // Toggle watched status
+                        const item = watchlistItems.find(item => item.id === parseInt(movieId));
+                        if (!item) return;
+
+                        const response = await fetch(`/api/watchlist/${movieId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({
+                                watched: !item.watched,
+                                rating: item.rating,
+                                review: item.review
+                            })
+                        });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            throw new Error(`Failed to update watched status: ${errorText}`);
+                        }
+
+                        // Update local state
+                        item.watched = !item.watched;
+                        updateDisplay();
+                    } else if (button.classList.contains('btn-remove')) {
+                        // Remove movie from watchlist
+                        const response = await fetch(`/api/watchlist/${movieId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            throw new Error(`Failed to remove movie: ${errorText}`);
+                        }
+
+                        // Update local state
+                        watchlistItems = watchlistItems.filter(item => item.id !== parseInt(movieId));
+                        updateDisplay();
+                    }
+                } catch (error) {
+                    console.error('Error updating watchlist:', error);
+                    showError(error instanceof Error ? error.message : 'Failed to update watchlist. Please try again.');
+                }
+            });
+        }
+
+        // Initial load
+        fetchWatchlist();
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initWatchlist);
+    } else {
+        initWatchlist();
+    }
+</script>

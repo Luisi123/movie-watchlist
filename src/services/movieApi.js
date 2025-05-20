@@ -1,162 +1,113 @@
-const API_KEY = 'http://www.omdbapi.com/?i=tt3896198&apikey=1b2fd19d'; 
-const BASE_URL = 'https://api.themoviedb.org/3';
+const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+const TMDB_API_KEY = 'f5c37777eebba305f9446d4a7d791979'; // Direct API key
 
-/**
- * Search for movies using a query string
- * @param {string} query - The search query
- * @param {number} page - Page number for pagination
- * @returns {Promise} - Promise containing search results
- */
-export const searchMovies = async (query, page = 1) => {
-  try {
-    const response = await fetch(
-      `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}&page=${page}`
-    );
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch movies');
-    }
-    
-    const data = await response.json();
-    
-    // Transform the results to match our application's needs
-    return {
-      page: data.page,
-      totalPages: data.total_pages,
-      totalResults: data.total_results,
-      results: data.results.map(movie => ({
-        id: movie.id,
-        title: movie.title,
-        posterUrl: movie.poster_path ? `${IMAGE_BASE_URL}${movie.poster_path}` : null,
-        year: movie.release_date ? new Date(movie.release_date).getFullYear() : 'Unknown',
-        rating: movie.vote_average,
-        overview: movie.overview
-      }))
-    };
-  } catch (error) {
-    console.error('Error searching movies:', error);
-    throw error;
-  }
+// Common headers for all requests
+const headers = {
+    'accept': 'application/json'
 };
+
+// Assuming your backend is running on port 5002
+export const API_BASE_URL = 'http://localhost:5002/api/TMDB';
 
 /**
  * Get popular movies
- * @param {number} page - Page number for pagination
- * @returns {Promise} - Promise containing popular movies
  */
-export const getPopularMovies = async (page = 1) => {
-  try {
-    const response = await fetch(
-      `${BASE_URL}/movie/popular?api_key=${API_KEY}&page=${page}`
-    );
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch popular movies');
+export async function getPopularMovies(page = 1) {
+    const url = `${API_BASE_URL}/movies/popular?page=${page}`;
+    console.log('Fetching popular movies from:', url);
+
+    try {
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.error('Response not OK:', errorData);
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error in getPopularMovies:', error);
+        throw new Error(`Failed to fetch popular movies: ${error.message}`);
     }
-    
-    const data = await response.json();
-    
-    // Transform the results to match our application's needs
-    return {
-      page: data.page,
-      totalPages: data.total_pages,
-      totalResults: data.total_results,
-      results: data.results.map(movie => ({
-        id: movie.id,
-        title: movie.title,
-        posterUrl: movie.poster_path ? `${IMAGE_BASE_URL}${movie.poster_path}` : null,
-        year: movie.release_date ? new Date(movie.release_date).getFullYear() : 'Unknown',
-        rating: movie.vote_average,
-        overview: movie.overview
-      }))
-    };
-  } catch (error) {
-    console.error('Error fetching popular movies:', error);
-    throw error;
-  }
-};
+}
+
+/**
+ * Search movies by title
+ */
+export async function searchMoviesByTitle(query, page = 1) {
+    const url = `${API_BASE_URL}/movies/search?query=${encodeURIComponent(query)}&page=${page}`;
+    console.log('Searching movies with URL:', url);
+
+    try {
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.error('Search response not OK:', errorData);
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error in searchMoviesByTitle:', error);
+        throw new Error(`Failed to search movies: ${error.message}`);
+    }
+}
 
 /**
  * Get movie details
  * @param {number} movieId - The ID of the movie
  * @returns {Promise} - Promise containing movie details
  */
-export const getMovieDetails = async (movieId) => {
-  try {
-    const response = await fetch(
-      `${BASE_URL}/movie/${movieId}?api_key=${API_KEY}&append_to_response=credits,videos`
-    );
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch movie details');
+export async function getMovieDetails(movieId) {
+    const url = `${API_BASE_URL}/movies/${movieId}`;
+    console.log('Fetching movie details from:', url);
+
+    try {
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.error('Movie details response not OK:', errorData);
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error in getMovieDetails:', error);
+        throw new Error(`Failed to fetch movie details: ${error.message}`);
     }
-    
-    const movie = await response.json();
-    
-    // Transform to match our application's needs
-    return {
-      id: movie.id,
-      title: movie.title,
-      posterUrl: movie.poster_path ? `${IMAGE_BASE_URL}${movie.poster_path}` : null,
-      backdropUrl: movie.backdrop_path ? `${IMAGE_BASE_URL}${movie.backdrop_path}` : null,
-      year: movie.release_date ? new Date(movie.release_date).getFullYear() : 'Unknown',
-      releaseDate: movie.release_date,
-      rating: movie.vote_average,
-      overview: movie.overview,
-      runtime: movie.runtime,
-      genres: movie.genres.map(genre => genre.name),
-      cast: movie.credits?.cast?.slice(0, 10).map(person => ({
-        id: person.id,
-        name: person.name,
-        character: person.character,
-        profilePath: person.profile_path ? `${IMAGE_BASE_URL}${person.profile_path}` : null
-      })) || [],
-      director: movie.credits?.crew?.find(person => person.job === 'Director')?.name || 'Unknown',
-      trailer: movie.videos?.results?.find(video => 
-        video.type === 'Trailer' && video.site === 'YouTube'
-      )?.key || null
-    };
-  } catch (error) {
-    console.error('Error fetching movie details:', error);
-    throw error;
-  }
-};
+}
 
 /**
- * Get movie recommendations based on a movie ID
- * @param {number} movieId - The ID of the movie
- * @param {number} page - Page number for pagination
- * @returns {Promise} - Promise containing recommended movies
+ * Get movie recommendations
  */
-export const getMovieRecommendations = async (movieId, page = 1) => {
-  try {
-    const response = await fetch(
-      `${BASE_URL}/movie/${movieId}/recommendations?api_key=${API_KEY}&page=${page}`
-    );
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch movie recommendations');
+export async function getMovieRecommendations(movieId) {
+    const url = `${API_BASE_URL}/movies/${movieId}/recommendations`;
+    console.log('Fetching movie recommendations from:', url);
+
+    try {
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.error('Recommendations response not OK:', errorData);
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error in getMovieRecommendations:', error);
+        throw new Error(`Failed to fetch movie recommendations: ${error.message}`);
     }
-    
-    const data = await response.json();
-    
-    // Transform the results to match our application's needs
-    return {
-      page: data.page,
-      totalPages: data.total_pages,
-      totalResults: data.total_results,
-      results: data.results.map(movie => ({
-        id: movie.id,
-        title: movie.title,
-        posterUrl: movie.poster_path ? `${IMAGE_BASE_URL}${movie.poster_path}` : null,
-        year: movie.release_date ? new Date(movie.release_date).getFullYear() : 'Unknown',
-        rating: movie.vote_average,
-        overview: movie.overview
-      }))
-    };
-  } catch (error) {
-    console.error('Error fetching movie recommendations:', error);
-    throw error;
-  }
-};
+}
+
+export async function register(name, email, password) {
+  // Implementation of register function
+}

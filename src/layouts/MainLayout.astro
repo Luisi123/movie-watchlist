@@ -1,5 +1,9 @@
 ---
+interface Props {
+    title?: string;
+}
 
+const { title = 'Movie Watchlist' } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -7,8 +11,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MovieMate - Your Movie Watchlist</title>
-    <link rel="stylesheet" href="/styles/global.css">
+    <title>{title}</title>
+    <link rel="stylesheet" href="/src/styles/global.css">
 </head>
 <body>
     <header>

@@ -1,0 +1,8 @@
+C:\Users\USER\movie-watchlist\MovieWatchlist.API\obj\Debug\net9.0\MovieWatchlist.API.csproj.AssemblyReference.cache
+C:\Users\USER\movie-watchlist\MovieWatchlist.API\obj\Debug\net9.0\MovieWatchlist.API.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\USER\movie-watchlist\MovieWatchlist.API\obj\Debug\net9.0\MovieWatchlist.API.AssemblyInfoInputs.cache
+C:\Users\USER\movie-watchlist\MovieWatchlist.API\obj\Debug\net9.0\MovieWatchlist.API.AssemblyInfo.cs
+C:\Users\USER\movie-watchlist\MovieWatchlist.API\obj\Debug\net9.0\MovieWatchlist.API.csproj.CoreCompileInputs.cache
+C:\Users\USER\movie-watchlist\MovieWatchlist.API\obj\Debug\net9.0\MovieWatchlist.API.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\USER\movie-watchlist\MovieWatchlist.API\obj\Debug\net9.0\MovieWatchlist.API.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\USER\movie-watchlist\MovieWatchlist.API\obj\Debug\net9.0\MovieWatchlist.API.sourcelink.json

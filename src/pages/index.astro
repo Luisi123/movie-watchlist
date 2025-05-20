@@ -3,38 +3,21 @@
 import MainLayout from '../layouts/MainLayout.astro';
 import Header from '../components/header.astro';
 import Footer from '../components/footer.astro';
+import MovieCard from '../components/MovieCard.astro';
+import { getPopularMovies } from '../services/movieApi.js';
+import '../styles/global.css';
 
-// Featured movies (this data would come from your API in a real app)
-const featuredMovies = [
-    {
-        id: 1,
-        title: "Inception",
-        posterUrl: "https://via.placeholder.com/300x450?text=Inception",
-        year: 2010,
-        rating: 8.8
-    },
-    {
-        id: 2,
-        title: "The Shawshank Redemption",
-        posterUrl: "https://via.placeholder.com/300x450?text=Shawshank",
-        year: 1994,
-        rating: 9.3
-    },
-    {
-        id: 3,
-        title: "The Dark Knight",
-        posterUrl: "https://via.placeholder.com/300x450?text=Dark+Knight",
-        year: 2008,
-        rating: 9.0
-    },
-    {
-        id: 4,
-        title: "Pulp Fiction",
-        posterUrl: "https://via.placeholder.com/300x450?text=Pulp+Fiction",
-        year: 1994,
-        rating: 8.9
-    }
-];
+interface Movie {
+    id: number;
+    title: string;
+    posterUrl: string | null;
+    year: number | string;
+    rating: number;
+}
+
+// Get popular movies for the featured section
+const popularMovies = await getPopularMovies(1);
+const featuredMovies = popularMovies.results.slice(0, 8); // Show top 8 movies
 ---
 
 <MainLayout>
@@ -46,7 +29,7 @@ const featuredMovies = [
             <p>Build your personal watchlist and get AI-powered recommendations based on your taste</p>
             <div class="cta-buttons">
                 <a href="/signup" class="btn primary">Get Started</a>
-                <a href="/recommendations" class="btn secondary">Explore Movies</a>
+                <a href="/search" class="btn secondary">Explore Movies</a>
             </div>
         </div>
     </section>
@@ -71,25 +54,36 @@ const featuredMovies = [
 
     <section class="featured">
         <h2>Featured Movies</h2>
-        <div class="movie-grid">
-            {featuredMovies.map(movie => (
-                <div class="movie-card">
-                    <div class="movie-poster">
-                        <img src={movie.posterUrl} alt={movie.title} />
-                    </div>
-                    <div class="movie-info">
-                        <h3>{movie.title}</h3>
-                        <div class="movie-meta">
-                            <span class="year">{movie.year}</span>
-                            <span class="rating">⭐ {movie.rating}</span>
+        <div class="carousel-container">
+            <button class="carousel-button prev" aria-label="Previous slide">❮</button>
+            <div class="movie-carousel">
+                <div class="movie-track">
+                    {featuredMovies.map((movie: Movie) => (
+                        <div class="movie-card">
+                            <div class="movie-poster">
+                                <img src={movie.posterUrl || 'https://via.placeholder.com/300x450?text=No+Image'} alt={movie.title} />
+                            </div>
+                            <div class="movie-info">
+                                <h3>{movie.title}</h3>
+                                <div class="movie-meta">
+                                    <span class="year">{movie.year}</span>
+                                    <span class="rating">⭐ {movie.rating}</span>
+                                </div>
+                                <a href={`/movies/${movie.id}`} class="btn small">View Details</a>
+                            </div>
                         </div>
-                        <a href={`/movies/${movie.id}`} class="btn small">View Details</a>
-                    </div>
+                    ))}
                 </div>
-            ))}
+            </div>
+            <button class="carousel-button next" aria-label="Next slide">❯</button>
+            <div class="carousel-dots">
+                {featuredMovies.slice(0, Math.max(0, featuredMovies.length - 3)).map((movie: Movie, index: number) => (
+                    <button class="dot" aria-label={`Go to slide ${index + 1}`}></button>
+                ))}
+            </div>
         </div>
         <div class="view-more">
-            <a href="/movies" class="btn secondary">View More Movies</a>
+            <a href="/search" class="btn secondary">View More Movies</a>
         </div>
     </section>
 
@@ -98,27 +92,30 @@ const featuredMovies = [
 
 <style>
     .hero {
-        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/cinema-background.jpg');
-        background-size: cover;
-        background-position: center;
-        color: white;
-        padding: 6rem 2rem;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         text-align: center;
+        padding: 2rem;
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        color: white;
     }
 
     .hero-content {
         max-width: 800px;
-        margin: 0 auto;
     }
 
     .hero h1 {
         font-size: 3rem;
         margin-bottom: 1rem;
+        color: #e94560;
     }
 
     .hero p {
         font-size: 1.2rem;
         margin-bottom: 2rem;
+        color: #ccc;
     }
 
     .cta-buttons {
@@ -185,23 +182,76 @@ const featuredMovies = [
         margin-bottom: 1rem;
     }
 
+    .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
     .featured {
-        padding: 4rem 2rem;
+        padding: 4rem 0;
+        overflow: hidden;
+        text-align: center;
     }
 
     .featured h2 {
-        text-align: center;
         margin-bottom: 2rem;
     }
 
-    .movie-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    .carousel-container {
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 3rem;
+    }
+
+    .carousel-button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease;
+        z-index: 2;
+    }
+
+    .carousel-button:hover {
+        background: rgba(0, 0, 0, 0.8);
+    }
+
+    .carousel-button.prev {
+        left: 0;
+    }
+
+    .carousel-button.next {
+        right: 0;
+    }
+
+    .movie-carousel {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+
+    .movie-track {
+        display: flex;
         gap: 2rem;
-        margin-bottom: 2rem;
+        transition: transform 0.5s ease;
     }
 
     .movie-card {
+        flex: 0 0 250px;
         background-color: white;
         border-radius: 8px;
         overflow: hidden;
@@ -211,6 +261,27 @@ const featuredMovies = [
 
     .movie-card:hover {
         transform: translateY(-5px);
+    }
+
+    .carousel-dots {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #ddd;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .dot.active {
+        background: #e94560;
     }
 
     .movie-poster img {
@@ -226,6 +297,10 @@ const featuredMovies = [
     .movie-info h3 {
         margin-top: 0;
         margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .movie-meta {
@@ -237,6 +312,12 @@ const featuredMovies = [
 
     .view-more {
         text-align: center;
+    }
+
+    @media (max-width: 1200px) {
+        .movie-card {
+            flex: 0 0 220px;
+        }
     }
 
     @media (max-width: 768px) {
@@ -251,10 +332,107 @@ const featuredMovies = [
         .features {
             flex-direction: column;
             align-items: center;
+            padding: 2rem 1rem;
         }
 
-        .movie-grid {
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        .feature {
+            min-width: 100%;
+            max-width: 100%;
+        }
+
+        .carousel-container {
+            padding: 0 2rem;
+        }
+
+        .carousel-button {
+            width: 30px;
+            height: 30px;
+            font-size: 1rem;
+        }
+
+        .movie-card {
+            flex: 0 0 180px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .carousel-container {
+            padding: 0 1.5rem;
+        }
+
+        .movie-card {
+            flex: 0 0 150px;
+        }
+
+        .btn.small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
         }
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const track = document.querySelector('.movie-track') as HTMLElement;
+        const prevButton = document.querySelector('.carousel-button.prev') as HTMLElement;
+        const nextButton = document.querySelector('.carousel-button.next') as HTMLElement;
+        const dots = document.querySelectorAll('.dot');
+        const cards = document.querySelectorAll('.movie-card');
+        
+        if (!track || !prevButton || !nextButton) return;
+
+        let currentIndex = 0;
+        const cardWidth = 250; // Width of each card
+        const gap = 32; // Gap between cards (2rem)
+        const cardsPerView = window.innerWidth > 768 ? 4 : window.innerWidth > 480 ? 3 : 2;
+        const maxIndex = Math.max(0, cards.length - cardsPerView);
+
+        function updateCarousel() {
+            const offset = currentIndex * (cardWidth + gap);
+            track.style.transform = `translateX(-${offset}px)`;
+            
+            // Update dots
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+
+            // Update button states
+            prevButton.style.opacity = currentIndex === 0 ? '0.5' : '1';
+            nextButton.style.opacity = currentIndex >= maxIndex ? '0.5' : '1';
+            prevButton.style.pointerEvents = currentIndex === 0 ? 'none' : 'auto';
+            nextButton.style.pointerEvents = currentIndex >= maxIndex ? 'none' : 'auto';
+        }
+
+        prevButton.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCarousel();
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            if (currentIndex < maxIndex) {
+                currentIndex++;
+                updateCarousel();
+            }
+        });
+
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                currentIndex = Math.min(index, maxIndex);
+                updateCarousel();
+            });
+        });
+
+        // Initialize
+        updateCarousel();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const newCardsPerView = window.innerWidth > 768 ? 4 : window.innerWidth > 480 ? 3 : 2;
+            const newMaxIndex = Math.max(0, cards.length - newCardsPerView);
+            currentIndex = Math.min(currentIndex, newMaxIndex);
+            updateCarousel();
+        });
+    });
+</script>
