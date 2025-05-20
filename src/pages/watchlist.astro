@@ -63,7 +63,7 @@ import '../styles/global.css';
 <style>
     .watchlist-section {
         background-color: #f8f9fa;
-        padding: 3rem 0;
+        padding: 2rem 0;
         text-align: center;
     }
 
@@ -120,7 +120,7 @@ import '../styles/global.css';
 
     .filter-buttons {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.8rem;
     }
 
     .filter-btn {
@@ -134,134 +134,144 @@ import '../styles/global.css';
         font-weight: 600;
     }
 
+    .filter-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
     .filter-btn.active {
         background: #e94560;
         color: white;
         border-color: #e94560;
     }
 
+    .filter-btn.active:hover {
+        background: #d13652;
+    }
+
     .movies-grid {
-        padding: 3rem 0;
+        box-sizing: border-box;
+        color: rgb(51, 51, 51);
+        display: block;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        height: 2633.96px;
+        line-height: 25.6px;
+        margin: 0;
+        padding: 48px 0;
+        unicode-bidi: isolate;
+        width: 1068.8px;
     }
 
     .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 2rem;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1.5rem;
         padding: 1rem 0;
-        max-width: 1200px;
-        margin: 0 auto;
     }
 
     .movie-card {
-        background: #1a1a1a;
+        background: white;
         border-radius: 8px;
         overflow: hidden;
-        transition: transform 0.3s ease;
-        position: relative;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
     .movie-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
-    .poster-container {
-        position: relative;
-        padding-top: 150%; /* Maintain aspect ratio */
-        background: #2d2d2d;
-        overflow: hidden;
+    .movie-poster {
+        aspect-ratio: 208.488/312.725;
+        background-color: #f5f5f5;
+        width: 100%;
     }
 
-    .poster {
-        position: absolute;
-        top: 0;
-        left: 0;
+    .movie-poster img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
 
-    .no-poster {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #2d2d2d;
-        color: #666;
-    }
-
-    .rating {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: rgba(0, 0, 0, 0.8);
-        color: white;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 0.9rem;
-    }
-
     .movie-info {
         padding: 1rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
     }
 
-    .title {
-        margin: 0;
-        font-size: 1rem;
-        color: white;
-        line-height: 1.4;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+    .movie-info h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: #333;
     }
 
-    .added-date, .year {
+    .added-date {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .movie-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 1rem;
+    }
+
+    .year {
         margin: 0.5rem 0;
         color: #888;
         font-size: 0.9rem;
     }
 
     .movie-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
+        margin-top: auto;
+        padding: 0 1rem 1rem 1rem;
     }
 
-    .btn {
+    .movie-card .movie-actions .btn {
         width: 100%;
-        padding: 0.5rem;
-        border: none;
+        padding: 0.8rem;
+        border: 2px solid #ddd;
         border-radius: 4px;
         cursor: pointer;
         transition: all 0.3s ease;
-        font-weight: 500;
+        font-weight: 600;
         text-align: center;
+        background: white;
+        color: #333;
+        font-size: 1rem;
     }
 
-    .btn-watched {
+    .movie-card .movie-actions .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .movie-card .movie-actions .btn-watched {
+        border-color: #4CAF50;
+        color: #4CAF50;
+    }
+
+    .movie-card .movie-actions .btn-watched:hover {
         background: #4CAF50;
         color: white;
     }
 
-    .btn-watched:hover {
-        background: #45a049;
+    .movie-card .movie-actions .btn-remove {
+        border-color: #e94560;
+        color: #e94560;
     }
 
-    .btn-remove {
+    .movie-card .movie-actions .btn-remove:hover {
         background: #e94560;
         color: white;
-    }
-
-    .btn-remove:hover {
-        background: #d13652;
     }
 
     .empty-state {
@@ -319,7 +329,7 @@ import '../styles/global.css';
         width: 90%;
         max-width: 1200px;
         margin: 0 auto;
-        padding: 0 1.5rem;
+        padding: 0 1rem;
     }
 
     @media (max-width: 768px) {
@@ -342,7 +352,7 @@ import '../styles/global.css';
         }
 
         .grid {
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 1rem;
         }
 
@@ -362,9 +372,48 @@ import '../styles/global.css';
 
     @media (max-width: 480px) {
         .grid {
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 0.75rem;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.8rem;
         }
+    }
+
+    .action-btn {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        text-align: center;
+        background: white;
+        color: #333;
+        font-size: 1rem;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .watch-action {
+        border-color: #4CAF50;
+        color: #4CAF50;
+    }
+
+    .watch-action:hover {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .remove-action {
+        border-color: #e94560;
+        color: #e94560;
+    }
+
+    .remove-action:hover {
+        background: #e94560;
+        color: white;
     }
 </style>
 
@@ -486,15 +535,56 @@ import '../styles/global.css';
                                 <h3 class="title">${item.movieTitle}</h3>
                                 <p class="added-date">Added: ${new Date(item.addedAt).toLocaleDateString()}</p>
                                 <div class="movie-actions">
-                                    <button class="btn btn-watched" data-id="${item.id}">
-                                        ${item.watched ? 'Watched' : 'Mark as Watched'}
+                                    <button type="button" 
+                                            id="watch-btn-${item.id}" 
+                                            data-id="${item.id}"
+                                            style="width: 100%; padding: 0.8rem; border: 2px solid #4CAF50; border-radius: 4px; cursor: pointer; transition: all 0.3s ease; font-weight: 600; text-align: center; background: white; color: #4CAF50; font-size: 1rem; margin-bottom: 0.8rem;">
+                                        ${item.watched ? 'Watched ✓' : 'Mark as Watched'}
                                     </button>
-                                    <button class="btn btn-remove" data-id="${item.id}">
+                                    <button type="button" 
+                                            id="remove-btn-${item.id}" 
+                                            data-id="${item.id}"
+                                            style="width: 100%; padding: 0.8rem; border: 2px solid #e94560; border-radius: 4px; cursor: pointer; transition: all 0.3s ease; font-weight: 600; text-align: center; background: white; color: #e94560; font-size: 1rem;">
                                         Remove
                                     </button>
                                 </div>
                             </div>
                         `;
+
+                        // Add hover effects using JavaScript
+                        const watchBtn = card.querySelector(`#watch-btn-${item.id}`) as HTMLButtonElement;
+                        const removeBtn = card.querySelector(`#remove-btn-${item.id}`) as HTMLButtonElement;
+
+                        if (watchBtn) {
+                            watchBtn.addEventListener('mouseover', () => {
+                                watchBtn.style.background = '#4CAF50';
+                                watchBtn.style.color = 'white';
+                                watchBtn.style.transform = 'translateY(-2px)';
+                                watchBtn.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+                            });
+                            watchBtn.addEventListener('mouseout', () => {
+                                watchBtn.style.background = 'white';
+                                watchBtn.style.color = '#4CAF50';
+                                watchBtn.style.transform = 'none';
+                                watchBtn.style.boxShadow = 'none';
+                            });
+                        }
+
+                        if (removeBtn) {
+                            removeBtn.addEventListener('mouseover', () => {
+                                removeBtn.style.background = '#e94560';
+                                removeBtn.style.color = 'white';
+                                removeBtn.style.transform = 'translateY(-2px)';
+                                removeBtn.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+                            });
+                            removeBtn.addEventListener('mouseout', () => {
+                                removeBtn.style.background = 'white';
+                                removeBtn.style.color = '#e94560';
+                                removeBtn.style.transform = 'none';
+                                removeBtn.style.boxShadow = 'none';
+                            });
+                        }
+
                         watchlistGrid.appendChild(card);
                     } catch (error) {
                         console.error('Error creating movie card:', error);
@@ -529,8 +619,8 @@ import '../styles/global.css';
         // Add event delegation for movie actions
         if (watchlistGrid) {
             watchlistGrid.addEventListener('click', async (e) => {
-                const target = e.target;
-                const button = target instanceof HTMLElement ? target.closest('button') : null;
+                const target = e.target as HTMLElement;
+                const button = target.closest('button');
                 if (!button) return;
 
                 const movieId = button.getAttribute('data-id');
@@ -543,7 +633,7 @@ import '../styles/global.css';
                 }
 
                 try {
-                    if (button.classList.contains('btn-watched')) {
+                    if (button.id.startsWith('watch-btn-')) {
                         // Toggle watched status
                         const item = watchlistItems.find(item => item.id === parseInt(movieId));
                         if (!item) return;
@@ -569,7 +659,7 @@ import '../styles/global.css';
                         // Update local state
                         item.watched = !item.watched;
                         updateDisplay();
-                    } else if (button.classList.contains('btn-remove')) {
+                    } else if (button.id.startsWith('remove-btn-')) {
                         // Remove movie from watchlist
                         const response = await fetch(`/api/watchlist/${movieId}`, {
                             method: 'DELETE',
