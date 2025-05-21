@@ -2,8 +2,6 @@
 
 A modern web application for tracking, and discovering movies. Built with Astro, TypeScript, and a RESTful API backend.
 
-## 🌟 Features
-
 ### Core Features
 - **Movie Discovery**: Browse popular movies and search for specific titles
 - **Personal Watchlist**: Create and manage your personal movie collection

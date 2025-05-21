@@ -3,9 +3,12 @@ import { defineConfig } from 'astro/config';
 
 import svelte from '@astrojs/svelte';
 
+import netlify from '@astrojs/netlify';
+
 // https://astro.build/config
 export default defineConfig({
   integrations: [svelte()],
+
   vite: {
     envPrefix: ['TMDB_', 'API_'],
     server: {
@@ -18,9 +21,13 @@ export default defineConfig({
       }
     }
   },
+
   output: 'server',
+
   server: {
     port: 4321,
     host: true
-  }
+  },
+
+  adapter: netlify()
 });
