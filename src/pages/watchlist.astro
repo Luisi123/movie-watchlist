@@ -164,89 +164,94 @@ import '../styles/global.css';
 
     .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 2rem;
         padding: 1rem 0;
     }
 
-    .movie-card {
+    #watchlistGrid .movie-card {
         background: white;
-        border-radius: 8px;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease;
-        height: 100%;
+        transition: all 0.3s ease;
+        position: relative;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         display: flex;
         flex-direction: column;
     }
 
-    .movie-card:hover {
+    #watchlistGrid .movie-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
     }
 
-    .movie-poster {
-        aspect-ratio: 208.488/312.725;
-        background-color: #f5f5f5;
+    #watchlistGrid .movie-card .poster-container {
+        position: relative;
+        padding-top: 150%;
+        background: #f8f9fa;
         width: 100%;
+        overflow: hidden;
     }
 
-    .movie-poster img {
+    #watchlistGrid .movie-card .poster-container img {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.3s ease;
     }
 
-    .movie-info {
-        padding: 1rem;
+    #watchlistGrid .movie-card:hover .poster-container img {
+        transform: scale(1.05);
+    }
+
+    #watchlistGrid .movie-card .movie-info {
+        padding: 1.25rem;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
+        gap: 0.5rem;
     }
 
-    .movie-info h3 {
+    #watchlistGrid .movie-card .movie-info h3 {
+        margin: 0;
         font-size: 1.1rem;
-        margin-bottom: 0.5rem;
         color: #333;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 2.8em;
     }
 
-    .added-date {
+    #watchlistGrid .movie-card .added-date {
         color: #666;
         font-size: 0.9rem;
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
     }
 
-    .movie-meta {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.9rem;
-        color: #666;
-        margin-bottom: 1rem;
-    }
-
-    .year {
-        margin: 0.5rem 0;
-        color: #888;
-        font-size: 0.9rem;
-    }
-
-    .movie-actions {
+    #watchlistGrid .movie-card .movie-actions {
         margin-top: auto;
-        padding: 0 1rem 1rem 1rem;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
     }
 
     .movie-card .movie-actions .btn {
         width: 100%;
         padding: 0.8rem;
-        border: 2px solid #ddd;
-        border-radius: 4px;
+        border: 2px solid;
+        border-radius: 6px;
         cursor: pointer;
         transition: all 0.3s ease;
         font-weight: 600;
         text-align: center;
         background: white;
-        color: #333;
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
 
     .movie-card .movie-actions .btn:hover {
@@ -353,27 +358,40 @@ import '../styles/global.css';
 
         .grid {
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 1rem;
+            gap: 1.5rem;
         }
 
-        .movie-info {
-            padding: 0.75rem;
+        #watchlistGrid .movie-card .movie-info {
+            padding: 1rem;
         }
 
-        .title {
+        #watchlistGrid .movie-card .movie-info h3 {
+            font-size: 1rem;
+        }
+
+        .movie-card .movie-actions .btn {
+            padding: 0.7rem;
             font-size: 0.9rem;
-        }
-
-        .btn {
-            padding: 0.4rem;
-            font-size: 0.8rem;
         }
     }
 
     @media (max-width: 480px) {
         .grid {
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 0.8rem;
+            gap: 1rem;
+        }
+
+        #watchlistGrid .movie-card .movie-info {
+            padding: 0.75rem;
+        }
+
+        #watchlistGrid .movie-card .movie-info h3 {
+            font-size: 0.9rem;
+        }
+
+        .movie-card .movie-actions .btn {
+            padding: 0.6rem;
+            font-size: 0.85rem;
         }
     }
 
