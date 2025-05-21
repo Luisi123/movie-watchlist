@@ -27,9 +27,7 @@ namespace MovieWatchlist.API.Controllers
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _configuration["TMDB:AccessToken"]);
-
-                var response = await client.GetAsync($"{TMDB_BASE_URL}/movie/popular?page={page}");
+                var response = await client.GetAsync($"{TMDB_BASE_URL}/movie/popular?api_key={_configuration["TMDB:ApiKey"]}&page={page}");
                 var content = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
@@ -72,9 +70,7 @@ namespace MovieWatchlist.API.Controllers
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _configuration["TMDB:AccessToken"]);
-
-                var response = await client.GetAsync($"{TMDB_BASE_URL}/search/movie?query={Uri.EscapeDataString(query)}&page={page}");
+                var response = await client.GetAsync($"{TMDB_BASE_URL}/search/movie?api_key={_configuration["TMDB:ApiKey"]}&query={Uri.EscapeDataString(query)}&page={page}");
                 var content = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
@@ -117,9 +113,7 @@ namespace MovieWatchlist.API.Controllers
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _configuration["TMDB:AccessToken"]);
-
-                var response = await client.GetAsync($"{TMDB_BASE_URL}/movie/{id}");
+                var response = await client.GetAsync($"{TMDB_BASE_URL}/movie/{id}?api_key={_configuration["TMDB:ApiKey"]}");
                 var content = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
@@ -163,9 +157,7 @@ namespace MovieWatchlist.API.Controllers
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _configuration["TMDB:AccessToken"]);
-
-                var response = await client.GetAsync($"{TMDB_BASE_URL}/movie/{id}/recommendations");
+                var response = await client.GetAsync($"{TMDB_BASE_URL}/movie/{id}/recommendations?api_key={_configuration["TMDB:ApiKey"]}");
                 var content = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)

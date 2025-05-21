@@ -8,13 +8,13 @@ const headers = {
 };
 
 // Assuming your backend is running on port 5002
-export const API_BASE_URL = 'http://localhost:5002/api/TMDB';
+export const API_BASE_URL = 'http://localhost:5002/api/Movies';
 
 /**
  * Get popular movies
  */
 export async function getPopularMovies(page = 1) {
-    const url = `${API_BASE_URL}/movies/popular?page=${page}`;
+    const url = `${API_BASE_URL}/popular?page=${page}`;
     console.log('Fetching popular movies from:', url);
 
     try {
@@ -38,7 +38,7 @@ export async function getPopularMovies(page = 1) {
  * Search movies by title
  */
 export async function searchMoviesByTitle(query, page = 1) {
-    const url = `${API_BASE_URL}/movies/search?query=${encodeURIComponent(query)}&page=${page}`;
+    const url = `${API_BASE_URL}/search?query=${encodeURIComponent(query)}&page=${page}`;
     console.log('Searching movies with URL:', url);
 
     try {
@@ -64,7 +64,7 @@ export async function searchMoviesByTitle(query, page = 1) {
  * @returns {Promise} - Promise containing movie details
  */
 export async function getMovieDetails(movieId) {
-    const url = `${API_BASE_URL}/movies/${movieId}`;
+    const url = `${API_BASE_URL}/${movieId}`;
     console.log('Fetching movie details from:', url);
 
     try {
@@ -88,7 +88,7 @@ export async function getMovieDetails(movieId) {
  * Get movie recommendations
  */
 export async function getMovieRecommendations(movieId) {
-    const url = `${API_BASE_URL}/movies/${movieId}/recommendations`;
+    const url = `${API_BASE_URL}/${movieId}/recommendations`;
     console.log('Fetching movie recommendations from:', url);
 
     try {
